@@ -1,0 +1,39 @@
+#THIS IS A DUMP FILE TO WRITE DOWN ALL THE IMPORTANT RESEARCH WE'RE DOING
+
+#New Topic to Study: UDP hole punching
+
+###################################
+###### UPNP PORT FORWARDING #######
+###################################
+
+###################################################################################################
+#There exists a way to do it using iptables with the following commands:		
+iptables -t nat -I PREROUTING -p tcp --dport <EXTERNAL_PORT> -j DNAT --to <INTERNAL_IP>:<INTERNAL_PORT>
+iptables -I FORWARD -p tcp -d <INTERNAL_IP> --dport <INTERNAL_PORT> -j ACCEPT [-s <EXTERNAL_IP>]
+#Actual sample commands
+iptables -t nat -I PREROUTING -p tcp --dport 81 -j DNAT --to 192.168.1.2:80
+iptables -I FORWARD -p tcp -d 192.168.1.2 --dport 80 -j ACCEPT
+#problem with this: android doesn't have iptables access by default. need root!!!
+#source: http://www.dd-wrt.com/wiki/index.php/Port_Forwarding
+###################################################################################################
+
+###################################################################################################
+#Java code sample. This looks very promising
+#start of source code snippet
+InternetGatewayDevice[] devices=InternetGatewayDevice.getDevices( 1000 );
+System.out.println("Found "+devices.length+" Devices");
+InternetGatewayDevice dev = devices[ 0 ];
+System.out.println(dev);
+System.out.println( "External IP = " + dev.getExternalIPAddress() );
+System.out.println( dev.addPortMapping( "Streamternet", "TCP", null, 1333,"192.168.0.105", 8888, 0 ) );
+System.out.println( "waiting for connection" );
+HTTPServer.main(null);
+#end of source code snippet
+#source: http://stackoverflow.com/questions/13712270/how-to-upnp-forward-ports-via-two-levels-of-routers
+###################################################################################################
+
+###################################################################################################
+#sources yet to explore
+http://upnp-portmapper.sourceforge.net/
+http://www.codeproject.com/Articles/13285/Using-UPnP-for-Programmatic-Port-Forwardings-and-N
+###################################################################################################
